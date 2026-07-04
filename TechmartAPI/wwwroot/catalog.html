@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TECHMART | Каталог</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .catalog-header {
+            margin: 40px 0 24px;
+        }
+        .search-bar {
+            margin-bottom: 32px;
+        }
+        .search-bar input {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px 20px;
+            border: 1px solid #CBD5E1;
+            border-radius: 30px;
+            font-size: 16px;
+        }
+        .category-filter {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+        }
+        .category-btn {
+            padding: 8px 20px;
+            border: 1px solid #CBD5E1;
+            border-radius: 30px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .category-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .category-btn:hover {
+            background: var(--primary-light);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <div class="header__inner">
+                <a href="index.html" class="logo">TECHMART</a>
+                <nav class="nav">
+                    <a href="index.html" class="nav__link">Главная</a>
+                    <a href="catalog.html" class="nav__link">Каталог</a>
+                    <a href="#" class="nav__link">Контакты</a>
+                    <a href="orders.html" class="nav__link">Мои заказы</a>
+                </nav>
+                <div class="header__actions">
+                    <a href="#" class="icon-btn" id="searchBtn"><i class="fas fa-search"></i></a>
+                    <a href="#" class="icon-btn" id="cartBtn"><i class="fas fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span></a>
+                    <a href="#" class="btn btn--outline" id="authBtn">Войти</a>
+                    <div class="user-menu" id="userMenu" style="display: none;">
+                        <div class="user-avatar" id="userAvatar">
+                            <img src="https://ui-avatars.com/api/?background=0057B3&color=fff&bold=true&size=40" alt="User">
+                        </div>
+                        <a href="#" class="btn btn--outline" id="logoutBtn" style="padding: 8px 16px; font-size: 14px;">Выйти</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="catalog-header">
+                <h1>Каталог товаров</h1>
+            </div>
+
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Поиск по названию...">
+            </div>
+
+            <div class="category-filter" id="categoryFilter"></div>
+
+            <div class="products-grid" id="catalogGrid">
+                <div class="loading">Загрузка...</div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__inner">
+                <div class="footer__col"><div class="logo">TECHMART</div><p class="footer__text">Магазин техники с системой рекомендаций.</p></div>
+                <div class="footer__col"><h4>О нас</h4><a href="#">О компании</a><a href="#">Доставка</a></div>
+                <div class="footer__col"><h4>Помощь</h4><a href="#">Контакты</a><a href="#">Возврат</a></div>
+                <div class="footer__col"><h4>Соцсети</h4><div class="social-links"><a href="#"><i class="fab fa-instagram"></i></a><a href="#"><i class="fab fa-telegram"></i></a></div></div>
+            </div>
+        </div>
+    </footer>
+
+    <div class="modal" id="cartModal">
+        <div class="modal__content" style="width: 600px; max-width: 90%;">
+            <span class="modal__close" id="cartModalClose">&times;</span>
+            <h2>Корзина</h2>
+            <div id="cartItemsList" style="max-height: 400px; overflow-y: auto;"><div class="loading">Корзина пуста</div></div>
+            <div id="cartTotal" style="margin-top: 20px; font-size: 20px; font-weight: 700; text-align: right;"></div>
+            <div style="display: flex; gap: 12px; margin-top: 20px;">
+                <button id="clearCartBtn" class="btn btn--outline" style="flex:1;">Очистить корзину</button>
+                <button id="checkoutBtn" class="btn btn--primary" style="flex:1;">Оформить заказ</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="authModal">
+        <div class="modal__content">
+            <span class="modal__close">&times;</span>
+            <h2>Вход в аккаунт</h2>
+            <form id="loginForm">
+                <input type="text" placeholder="Логин" id="loginInput" required>
+                <input type="password" placeholder="Пароль" id="passwordInput" required>
+                <button type="submit" class="btn btn--primary" style="width:100%;">Войти</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="catalog.js"></script>
+</body>
+</html>

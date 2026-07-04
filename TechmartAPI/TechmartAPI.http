@@ -1,0 +1,6 @@
+@TechmartAPI_HostAddress = http://localhost:5159
+
+GET {{TechmartAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

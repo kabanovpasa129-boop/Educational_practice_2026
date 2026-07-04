@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TECHMART | Админ-панель</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .admin-tabs {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 32px;
+            border-bottom: 1px solid #E2E8F0;
+            padding-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .admin-tab {
+            padding: 10px 24px;
+            background: none;
+            border: none;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 30px;
+            transition: all 0.2s;
+        }
+        .admin-tab:hover {
+            background: var(--bg-gray);
+        }
+        .admin-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+        .admin-panel {
+            display: none;
+        }
+        .admin-panel.active {
+            display: block;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        .stat-card {
+            background: var(--white);
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .stat-label {
+            color: var(--text-gray);
+            margin-top: 8px;
+        }
+        .product-form {
+            background: var(--white);
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 32px;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .product-form input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #CBD5E1;
+            border-radius: 8px;
+        }
+        .products-table {
+            width: 100%;
+            background: var(--white);
+            border-radius: 16px;
+            overflow-x: auto;
+            box-shadow: var(--shadow);
+        }
+        .products-table th, .products-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #E2E8F0;
+        }
+        .products-table th {
+            background: var(--bg-gray);
+            font-weight: 600;
+        }
+        .products-table tr:hover {
+            background: var(--bg-light);
+        }
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #D96E6E;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .edit-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 18px;
+            margin-right: 8px;
+        }
+        .top-products {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+        }
+        .top-product-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #E2E8F0;
+        }
+        .weight-sliders {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+        }
+        .slider-group {
+            margin-bottom: 24px;
+        }
+        .slider-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .slider-group input {
+            width: 100%;
+            margin: 10px 0;
+        }
+        .slider-value {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        .warning {
+            color: #D96E6E;
+            margin: 12px 0;
+            display: none;
+        }
+        .user-role-select {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid #CBD5E1;
+        }
+        .action-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 8px;
+        }
+        .action-btn.danger {
+            background: #D96E6E;
+        }
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <div class="header__inner">
+                <a href="index.html" class="logo">TECHMART</a>
+                <nav class="nav">
+                    <a href="index.html" class="nav__link">Главная</a>
+                    <a href="catalog.html" class="nav__link">Каталог</a>
+                    <a href="#" class="nav__link">Контакты</a>
+                </nav>
+                <div class="header__actions">
+                    <div class="user-menu" id="userMenu" style="display: flex; align-items: center; gap: 12px;">
+                        <div class="user-avatar" id="userAvatar">
+                            <img src="https://ui-avatars.com/api/?background=0057B3&color=fff&bold=true&size=40" alt="User">
+                        </div>
+                        <a href="#" class="btn btn--outline" id="logoutBtn" style="padding: 8px 16px; font-size: 14px;">Выйти</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <h1 style="margin: 40px 0 24px;">Административная панель</h1>
+
+            <div class="admin-tabs">
+                <button class="admin-tab active" data-tab="stats">Статистика</button>
+                <button class="admin-tab" data-tab="products">Управление товарами</button>
+                <button class="admin-tab" data-tab="weights">Настройка весов</button>
+                <button class="admin-tab" data-tab="users">Управление пользователями</button>
+            </div>
+
+            <!-- Вкладка Статистика -->
+            <div id="statsPanel" class="admin-panel active">
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalProducts">-</div>
+                        <div class="stat-label">Товаров</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalUsers">-</div>
+                        <div class="stat-label">Пользователей</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalOrders">-</div>
+                        <div class="stat-label">Заказов</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalRecommendations">-</div>
+                        <div class="stat-label">Рекомендаций</div>
+                    </div>
+                </div>
+
+                <div class="top-products">
+                    <h3>Топ-5 популярных товаров</h3>
+                    <div id="topProductsList">
+                        <div class="loading">Загрузка...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Вкладка Управление товарами -->
+            <div id="productsPanel" class="admin-panel">
+                <div class="product-form">
+                    <input type="text" id="productName" placeholder="Название товара">
+                    <input type="text" id="productCategory" placeholder="Категория">
+                    <input type="number" id="productPrice" placeholder="Цена" step="0.01">
+                    <button id="addProductBtn" class="btn btn--primary">Добавить товар</button>
+                </div>
+
+                <div class="products-table-wrapper">
+                    <table class="products-table">
+                        <thead>
+                            <tr><th>ID</th><th>Название</th><th>Категория</th><th>Цена</th><th>Действия</th></tr>
+                        </thead>
+                        <tbody id="productsTableBody">
+                            <tr><td colspan="5"><div class="loading">Загрузка...</div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Вкладка Настройка весов -->
+            <div id="weightsPanel" class="admin-panel">
+                <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr);">
+                    <div class="stat-card">
+                        <div class="stat-number" id="collaborativeWeight">-</div>
+                        <div class="stat-label">Коллаборативная</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="contentBasedWeight">-</div>
+                        <div class="stat-label">Контентная</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="associationWeight">-</div>
+                        <div class="stat-label">Правила ассоциации</div>
+                    </div>
+                    <div class="stat-card" style="background: var(--bg-gray);">
+                        <div class="stat-number" id="totalWeight">-</div>
+                        <div class="stat-label">Сумма (должна быть 1.0)</div>
+                    </div>
+                </div>
+
+                <div class="weight-sliders">
+                    <h3 style="margin-bottom: 24px;">Изменить веса алгоритмов рекомендаций</h3>
+                    
+                    <div class="slider-group">
+                        <label>Коллаборативная фильтрация (похожие пользователи)</label>
+                        <input type="range" id="collaborativeSlider" min="0" max="1" step="0.01" value="0.4">
+                        <span class="slider-value" id="collaborativeValue">0.40</span>
+                    </div>
+
+                    <div class="slider-group">
+                        <label>Контентно-ориентированная (похожие товары)</label>
+                        <input type="range" id="contentBasedSlider" min="0" max="1" step="0.01" value="0.35">
+                        <span class="slider-value" id="contentBasedValue">0.35</span>
+                    </div>
+
+                    <div class="slider-group">
+                        <label>Правила ассоциации (с этим товаром покупают)</label>
+                        <input type="range" id="associationSlider" min="0" max="1" step="0.01" value="0.25">
+                        <span class="slider-value" id="associationValue">0.25</span>
+                    </div>
+
+                    <div id="weightWarning" class="warning">Сумма весов должна равняться 1.0 (100%)</div>
+                    <button id="saveWeightsBtn" class="btn btn--primary" style="margin-top: 20px;">Сохранить веса</button>
+                </div>
+            </div>
+
+            <!-- Вкладка Управление пользователями -->
+            <div id="usersPanel" class="admin-panel">
+                <div class="stats-grid" style="grid-template-columns: 1fr 1fr 1fr; margin-bottom: 32px;">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalUsersCount">-</div>
+                        <div class="stat-label">Всего пользователей</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="customersCount">-</div>
+                        <div class="stat-label">Покупателей</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="adminsCount">-</div>
+                        <div class="stat-label">Администраторов</div>
+                    </div>
+                </div>
+
+                <div class="products-table-wrapper">
+                    <table class="products-table">
+                        <thead>
+                            <tr><th>ID</th><th>Логин</th><th>Роль</th><th>Действия</th></tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr><td colspan="4"><div class="loading">Загрузка...</div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API_URL = window.location.origin;
+        let currentUser = null;
+
+        async function checkAuth() {
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                if (currentUser.role !== 'администратор' && currentUser.role !== 'admin' && currentUser.role !== 'Администратор') {
+                    window.location.href = 'index.html';
+                    return false;
+                }
+                return true;
+            } else {
+                window.location.href = 'index.html';
+                return false;
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_URL}/api/Admin/stats`);
+                const data = await response.json();
+                document.getElementById('totalProducts').textContent = data.totalProducts;
+                document.getElementById('totalUsers').textContent = data.totalUsers;
+                document.getElementById('totalOrders').textContent = data.totalOrders;
+                document.getElementById('totalRecommendations').textContent = data.totalRecommendations;
+
+                const topProductsHtml = data.topProducts.map(p => `
+                    <div class="top-product-item">
+                        <span><strong>${p.name}</strong> (${p.category})</span>
+                        <span>Продано: ${p.salesCount} шт.</span>
+                    </div>
+                `).join('');
+                document.getElementById('topProductsList').innerHTML = topProductsHtml || '<div>Нет данных</div>';
+            } catch (error) {
+                console.error('Ошибка загрузки статистики:', error);
+            }
+        }
+
+        async function loadProductsForAdmin() {
+            try {
+                const response = await fetch(`${API_URL}/api/Admin/products`);
+                const products = await response.json();
+                const tbody = document.getElementById('productsTableBody');
+                if (products.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5">Нет товаров</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = products.map(p => `
+                    <tr data-id="${p.id}">
+                        <td>${p.id}</td>
+                        <td><input type="text" value="${p.name}" class="edit-name" style="width:100%; padding:6px;"></td>
+                        <td><input type="text" value="${p.category}" class="edit-category" style="width:100%; padding:6px;"></td>
+                        <td><input type="number" value="${p.price}" class="edit-price" style="width:100px; padding:6px;" step="0.01"></td>
+                        <td>
+                            <button class="edit-btn" data-id="${p.id}"><i class="fas fa-save"></i></button>
+                            <button class="delete-btn" data-id="${p.id}"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `).join('');
+
+                document.querySelectorAll('.edit-btn').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const id = btn.dataset.id;
+                        const row = btn.closest('tr');
+                        const name = row.querySelector('.edit-name').value;
+                        const category = row.querySelector('.edit-category').value;
+                        const price = parseFloat(row.querySelector('.edit-price').value);
+                        await updateProduct(id, name, category, price);
+                    });
+                });
+
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const id = btn.dataset.id;
+                        if (confirm('Удалить товар?')) {
+                            await deleteProduct(id);
+                        }
+                    });
+                });
+            } catch (error) {
+                console.error('Ошибка загрузки товаров:', error);
+            }
+        }
+
+        async function addProduct(name, category, price) {
+            try {
+                const response = await fetch(`${API_URL}/api/Admin/product`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, category, price })
+                });
+                if (response.ok) {
+                    alert('Товар добавлен');
+                    loadProductsForAdmin();
+                    if (document.getElementById('statsPanel').classList.contains('active')) {
+                        loadStats();
+                    }
+                } else {
+                    alert('Ошибка добавления');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+            }
+        }
+
+        async function updateProduct(id, name, category, price) {
+            try {
+                const response = await fetch(`${API_URL}/api/Admin/product/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, name, category, price })
+                });
+                if (response.ok) {
+                    alert('Товар обновлён');
+                    loadProductsForAdmin();
+                    if (document.getElementById('statsPanel').classList.contains('active')) {
+                        loadStats();
+                    }
+                } else {
+                    alert('Ошибка обновления');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+            }
+        }
+
+        async function deleteProduct(id) {
+            try {
+                const response = await fetch(`${API_URL}/api/Admin/product/${id}`, {
+                    method: 'DELETE'
+                });
+                if (response.ok) {
+                    alert('Товар удалён');
+                    loadProductsForAdmin();
+                    if (document.getElementById('statsPanel').classList.contains('active')) {
+                        loadStats();
+                    }
+                } else {
+                    alert('Ошибка удаления');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+            }
+        }
+
+        async function loadWeights() {
+            try {
+                const response = await fetch(`${API_URL}/api/Admin/weights`);
+                const weights = await response.json();
+                document.getElementById('collaborativeWeight').textContent = (weights.collaborativeWeight * 100).toFixed(0) + '%';
+                document.getElementById('contentBasedWeight').textContent = (weights.contentBasedWeight * 100).toFixed(0) + '%';
+                document.getElementById('associationWeight').textContent = (weights.associationWeight * 100).toFixed(0) + '%';
+                
+                const total = weights.collaborativeWeight + weights.contentBasedWeight + weights.associationWeight;
+                document.getElementById('totalWeight').textContent = (total * 100).toFixed(0) + '%';
+                if (Math.abs(total - 1.0) > 0.01) {
+                    document.getElementById('totalWeight').style.color = '#D96E6E';
+                } else {
+                    document.getElementById('totalWeight').style.color = '#2E9B6E';
+                }
+                
+                document.getElementById('collaborativeSlider').value = weights.collaborativeWeight;
+                document.getElementById('contentBasedSlider').value = weights.contentBasedWeight;
+                document.getElementById('associationSlider').value = weights.associationWeight;
+                document.getElementById('collaborativeValue').textContent = weights.collaborativeWeight.toFixed(2);
+                document.getElementById('contentBasedValue').textContent = weights.contentBasedWeight.toFixed(2);
+                document.getElementById('associationValue').textContent = weights.associationWeight.toFixed(2);
+            } catch (error) {
+                console.error('Ошибка загрузки весов:', error);
+            }
+        }
+
+        async function saveWeights() {
+            const collaborative = parseFloat(document.getElementById('collaborativeSlider').value);
+            const contentBased = parseFloat(document.getElementById('contentBasedSlider').value);
+            const association = parseFloat(document.getElementById('associationSlider').value);
+            const total = collaborative + contentBased + association;
+            
+            if (Math.abs(total - 1.0) > 0.01) {
+                document.getElementById('weightWarning').style.display = 'block';
+                return;
+            }
+            document.getElementById('weightWarning').style.display = 'none';
+            
+            try {
+                const response = await fetch(`${API_URL}/api/Admin/weights`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        collaborativeWeight: collaborative,
+                        contentBasedWeight: contentBased,
+                        associationWeight: association
+                    })
+                });
+                
+                if (response.ok) {
+                    alert('Веса алгоритмов сохранены');
+                    loadWeights();
+                } else {
+                    const error = await response.json();
+                    alert(error.message || 'Ошибка сохранения');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Ошибка подключения к серверу');
+            }
+        }
+
+        async function loadUsers() {
+            try {
+                const response = await fetch(`${API_URL}/api/Admin/users`);
+                const users = await response.json();
+                
+                const totalUsers = users.length;
+                const customers = users.filter(u => u.role === 'покупатель').length;
+                const admins = users.filter(u => u.role === 'администратор').length;
+                
+                document.getElementById('totalUsersCount').textContent = totalUsers;
+                document.getElementById('customersCount').textContent = customers;
+                document.getElementById('adminsCount').textContent = admins;
+                
+                const tbody = document.getElementById('usersTableBody');
+                if (users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4">Нет пользователей</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = users.map(u => `
+                    <tr data-id="${u.id}">
+                        <td>${u.id}</td>
+                        <td>${u.login}</td>
+                        <td>
+                            <select class="user-role-select" data-id="${u.id}" ${u.login === 'admin1' ? 'disabled' : ''}>
+                                <option value="покупатель" ${u.role === 'покупатель' ? 'selected' : ''}>покупатель</option>
+                                <option value="администратор" ${u.role === 'администратор' ? 'selected' : ''}>администратор</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button class="save-role-btn action-btn" data-id="${u.id}" ${u.login === 'admin1' ? 'disabled' : ''}>Сохранить роль</button>
+                            <button class="delete-user-btn action-btn danger" data-id="${u.id}" data-login="${u.login}" ${u.login === 'admin1' ? 'disabled' : ''}>Удалить</button>
+                        </td>
+                    </tr>
+                `).join('');
+                
+                document.querySelectorAll('.save-role-btn').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const id = btn.dataset.id;
+                        const select = document.querySelector(`.user-role-select[data-id="${id}"]`);
+                        const newRole = select.value;
+                        await updateUserRole(id, newRole);
+                    });
+                });
+                
+                document.querySelectorAll('.delete-user-btn').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const id = btn.dataset.id;
+                        const login = btn.dataset.login;
+                        if (confirm(`Удалить пользователя "${login}"?`)) {
+                            await deleteUser(id);
+                        }
+                    });
+                });
+            } catch (error) {
+                console.error('Ошибка загрузки пользователей:', error);
+            }
+        }
+
+        async function updateUserRole(id, role) {
+            try {
+                const response = await fetch(`${API_URL}/api/Admin/users/${id}/role`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(role)
+                });
+                if (response.ok) {
+                    alert('Роль пользователя обновлена');
+                    loadUsers();
+                    loadStats();
+                } else {
+                    const error = await response.json();
+                    alert(error.message || 'Ошибка обновления роли');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Ошибка подключения к серверу');
+            }
+        }
+
+        async function deleteUser(id) {
+            try {
+                const response = await fetch(`${API_URL}/api/Admin/users/${id}`, {
+                    method: 'DELETE'
+                });
+                if (response.ok) {
+                    alert('Пользователь удалён');
+                    loadUsers();
+                    loadStats();
+                } else {
+                    const error = await response.json();
+                    alert(error.message || 'Ошибка удаления пользователя');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Ошибка подключения к серверу');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
+        }
+
+        async function init() {
+            const isAdmin = await checkAuth();
+            if (!isAdmin) return;
+
+            document.getElementById('logoutBtn').addEventListener('click', (e) => {
+                e.preventDefault();
+                logout();
+            });
+
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    const tabName = tab.dataset.tab;
+                    document.querySelectorAll('.admin-panel').forEach(panel => panel.classList.remove('active'));
+                    document.getElementById(`${tabName}Panel`).classList.add('active');
+                    
+                    if (tabName === 'stats') {
+                        loadStats();
+                    } else if (tabName === 'products') {
+                        loadProductsForAdmin();
+                    } else if (tabName === 'weights') {
+                        loadWeights();
+                    } else if (tabName === 'users') {
+                        loadUsers();
+                    }
+                });
+            });
+
+            document.getElementById('addProductBtn').addEventListener('click', () => {
+                const name = document.getElementById('productName').value;
+                const category = document.getElementById('productCategory').value;
+                const price = parseFloat(document.getElementById('productPrice').value);
+                if (name && category && price > 0) {
+                    addProduct(name, category, price);
+                    document.getElementById('productName').value = '';
+                    document.getElementById('productCategory').value = '';
+                    document.getElementById('productPrice').value = '';
+                } else {
+                    alert('Заполните все поля');
+                }
+            });
+
+            document.getElementById('collaborativeSlider').addEventListener('input', (e) => {
+                document.getElementById('collaborativeValue').textContent = parseFloat(e.target.value).toFixed(2);
+            });
+            document.getElementById('contentBasedSlider').addEventListener('input', (e) => {
+                document.getElementById('contentBasedValue').textContent = parseFloat(e.target.value).toFixed(2);
+            });
+            document.getElementById('associationSlider').addEventListener('input', (e) => {
+                document.getElementById('associationValue').textContent = parseFloat(e.target.value).toFixed(2);
+            });
+
+            document.getElementById('saveWeightsBtn').addEventListener('click', saveWeights);
+
+            loadStats();
+        }
+
+        init();
+    </script>
+</body>
+</html>
